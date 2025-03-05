@@ -1,0 +1,4 @@
+paths:
+  data_dir: "data/"
+  log_dir: "logs/"
+  model_dir: "checkpoints/"
