@@ -38,3 +38,12 @@ class TiktokenTokenizer(Tokenizer):
 
     def decode(self, token_ids: list[int], *args, **kwargs) -> str:
         return self.__tokenizer.decode(token_ids, *args, **kwargs)
+
+def get_tokenizer(tokenizer_name: str, init_args: dict):
+    '''Get corresponding tokenizer'''
+
+    match tokenizer_name:
+        case "tiktoken":
+            return TiktokenTokenizer(**init_args)
+        case _:
+            raise ValueError(f'Unsupported tokenizer: {tokenizer_name}')

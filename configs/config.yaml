@@ -1,3 +1,9 @@
+model:
+  tokenizer:
+    name: "tiktoken"
+    init_args:
+      encoding_name: "gpt2" 
+
 paths:
   data_dir: "data/"
   log_dir: "logs/"
