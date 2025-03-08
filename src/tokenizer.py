@@ -60,11 +60,11 @@ def text_to_token_ids(
     """
     Converts text into a tensor of token ids
 
-    Inputs:
+    Args:
         text (str): raw text to convert
         tokenizer (Tokenizer): converter
         allowed_special (set): special characters to be included in dictionary. Default is None
-    Outputs:
+    Returns:
         Tensor: Shape (batch(1), num tokens)
     """
 
@@ -75,10 +75,10 @@ def token_ids_to_text(token_ids: torch.Tensor, tokenizer: Tokenizer) -> str:
     """
     Converts token ids back to raw text
 
-    Inputs:
+    Args:
         token_ids (Tensor): token ids of shape (batch size (1), num tokens)
         tokenizer (Tokenizer): converter
-    Outputs:
+    Returns:
         str: raw text
     """
 
