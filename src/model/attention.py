@@ -1,13 +1,13 @@
 """
 attention.py - Multi-Head Attention Module
 
-This module implements the Multi-Head Attention mechanism as described in 
+This module implements the Multi-Head Attention mechanism as described in
 "Attention Is All You Need" (Vaswani et al., 2017). It includes:
 
 - `MultiHeadAttentionConfig`: A dataclass for configuring multi-head attention parameters.
 - `MultiHeadAttention`: A PyTorch module that computes self-attention over input sequences.
 
-Multi-Head Attention allows a model to jointly attend to different positions in a sequence 
+Multi-Head Attention allows a model to jointly attend to different positions in a sequence
 by using multiple attention heads, improving its ability to capture complex dependencies.
 
 Classes:
@@ -124,7 +124,7 @@ class MultiHeadAttention(nn.Module):
                     torch.ones(self.config.context_length, self.config.context_length),
                     diagonal=1,
                 ),
-            )
+            ),
         )
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
@@ -178,7 +178,7 @@ class MultiHeadAttention(nn.Module):
             2, 3
         )  # Shape (_, _, num tokens, num tokens)
         attn_scores.masked_fill_(
-            getattr(self, 'mask').bool()[:n_tokens, :n_tokens],
+            getattr(self, "mask").bool()[:n_tokens, :n_tokens],
             -torch.inf,
         )
         attn_weights = torch.softmax(attn_scores / keys.shape[-1] ** 0.5, dim=-1)
