@@ -119,11 +119,9 @@ class MultiHeadAttention(nn.Module):
 
         self.register_buffer(
             "mask",
-            torch.Tensor(
-                torch.triu(
-                    torch.ones(self.config.context_length, self.config.context_length),
-                    diagonal=1,
-                ),
+            torch.triu(
+                torch.ones(self.config.context_length, self.config.context_length),
+                diagonal=1,
             ),
         )
 
