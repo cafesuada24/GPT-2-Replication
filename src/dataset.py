@@ -59,6 +59,7 @@ def create_dataloader(
     raw_text: str, tokenizer: Tokenizer, data_config: DataConfig | None = None,
 ) -> DataLoader:
     """"""
+
     if data_config is None:
         data_config = DataConfig()
 
@@ -67,7 +68,7 @@ def create_dataloader(
         tokenizer=tokenizer,
         data_config=data_config,
     )
-    print(len(dataset))
+
     dataloader = DataLoader(
         dataset,
         shuffle=data_config.shuffle,
