@@ -68,6 +68,8 @@ def text_to_token_ids(
         Tensor: Shape (batch(1), num tokens)
     """
 
+    allowed_special = allowed_special if allowed_special is not None else {'<|endoftext|>'}
+
     encoded = tokenizer.encode(text, allowed_special=allowed_special)
     return torch.tensor(encoded).unsqueeze(0)
 
