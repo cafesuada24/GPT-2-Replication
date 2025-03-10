@@ -12,7 +12,6 @@ from .tokenizer import Tokenizer
 class DataConfig:
     """"""
 
-    raw_text: str
     max_sequence_len: int = 256
     batch_size: int = 4
     stride: int = 128
@@ -32,13 +31,13 @@ class GPTDataset(Dataset):
     ) -> None:
         super().__init__()
 
-        tokens = tokenizer.encode(raw_text, allowed_special={"<|endoftext|>"})
+        tokens = tokenizer.encode(raw_text)
 
         self.inputs = []
         self.targets = []
 
         for index in range(
-            len(tokens) - data_config.max_sequence_len, data_config.stride
+            0, len(tokens) - data_config.max_sequence_len, data_config.stride
         ):
             self.inputs.append(
                 torch.tensor(tokens[index : index + data_config.max_sequence_len])
@@ -57,15 +56,18 @@ class GPTDataset(Dataset):
 
 
 def create_dataloader(
-    raw_text: str, tokenizer: Tokenizer, data_config: DataConfig
+    raw_text: str, tokenizer: Tokenizer, data_config: DataConfig | None = None,
 ) -> DataLoader:
     """"""
+    if data_config is None:
+        data_config = DataConfig()
 
     dataset = GPTDataset(
         raw_text=raw_text,
         tokenizer=tokenizer,
         data_config=data_config,
     )
+    print(len(dataset))
     dataloader = DataLoader(
         dataset,
         shuffle=data_config.shuffle,
