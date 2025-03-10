@@ -23,12 +23,12 @@ class FeedForward(nn.Module):
         >>> y = ff(x)  # Output shape: (32, 128, 512)
     """
 
-    def __init__(self, d_emb: int, activation: nn.Module = GELU()) -> None:
+    def __init__(self, d_emb: int, activation: nn.Module | None = None) -> None:
         super().__init__()
 
         self.layers = nn.Sequential(
             nn.Linear(d_emb, 4 * d_emb),
-            activation,
+            activation if activation is not None else GELU(),
             nn.Linear(4 * d_emb, d_emb),
         )
 

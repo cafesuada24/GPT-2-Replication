@@ -25,7 +25,7 @@ def calc_loss_batch(
     """
 
     input_batch = input_batch.to(device)
-    target_batch = input_batch.to(device)
+    target_batch = target_batch.to(device)
 
     logits: torch.Tensor = model(input_batch)
 
@@ -49,7 +49,7 @@ def calc_loss_loader(
         dataloader (Dataloader): dataset
         model (GPT2): a GPT2 model
         device (str or torch.device): the device that the model is sent to
-        n_batches (int or None): first n_batches to be included in calculation.
+        n_batches (int or None): number of batches to be included in calculation.
                                  Default is None, or equally the whole dataloader.
     Returns:
         Tensor: a scalar tensor contains calculated model loss.
@@ -77,7 +77,7 @@ def calc_loss_loader(
         )
         total_loss += loss.item()
 
-    return total_loss
+    return total_loss / n_batches
 
 
 def evaluate_model(
@@ -85,6 +85,7 @@ def evaluate_model(
     train_loader: DataLoader,
     val_loader: DataLoader,
     device: str | torch.device,
+    eval_iter: int | None = None,
 ) -> tuple[float, float]:
     """
     Calculates model loss on two separated datasets - train and validation.
@@ -96,7 +97,7 @@ def evaluate_model(
 
     model.eval()
     with torch.no_grad():
-        train_loss = calc_loss_loader(train_loader, model, device)
-        val_loss = calc_loss_loader(val_loader, model, device)
+        train_loss = calc_loss_loader(train_loader, model, device, n_batches=eval_iter)
+        val_loss = calc_loss_loader(val_loader, model, device, n_batches=eval_iter)
     model.train()
     return train_loss, val_loss

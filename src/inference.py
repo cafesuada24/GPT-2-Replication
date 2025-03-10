@@ -53,5 +53,5 @@ def generate(
             next_token_id = torch.argmax(logits, dim=-1, keepdim=True)
         if next_token_id == eos_id:
             break
-        token_ids = torch.cat((token_ids, next_token_id))
+        token_ids = torch.cat((token_ids, next_token_id), dim=1)
     return token_ids
