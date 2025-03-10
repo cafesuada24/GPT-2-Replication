@@ -32,7 +32,7 @@ class Tokenizer(metaclass=abc.ABCMeta):
 class TiktokenTokenizer(Tokenizer):
     """Uses tiktoken from GPT"""
 
-    def __init__(self, encoding_name: str) -> None:
+    def __init__(self, encoding_name: str = 'gpt2') -> None:
         super().__init__()
 
         self.__tokenizer = tiktoken.get_encoding(encoding_name)
