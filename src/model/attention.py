@@ -145,8 +145,8 @@ class MultiHeadAttention(nn.Module):
         n_batches, n_tokens, _ = inputs.shape
 
         queries = self.w_query(inputs)
-        keys = self.w_query(inputs)
-        values = self.w_query(inputs)
+        keys = self.w_key(inputs)
+        values = self.w_value(inputs)
 
         queries, keys, values = (
             tensor.view(
