@@ -35,11 +35,12 @@ def calc_loss_batch(
 
     return loss
 
+
 def calc_loss_loader(
     dataloader: DataLoader,
     model: GPT2,
     device: str | torch.device,
-    n_batches: int | None = None
+    n_batches: int | None = None,
 ) -> float:
     """
     Calculate the model loss on a data loader.
@@ -53,11 +54,11 @@ def calc_loss_loader(
     Returns:
         Tensor: a scalar tensor contains calculated model loss.
     """
- 
-    assert n_batches is None or n_batches > 0, 'n_batches must be a positive integer.'
+
+    assert n_batches is None or n_batches > 0, "n_batches must be a positive integer."
 
     if len(dataloader) == 0:
-        return float('nan')
+        return float("nan")
     if n_batches is None:
         n_batches = len(dataloader)
     else:
@@ -77,3 +78,25 @@ def calc_loss_loader(
         total_loss += loss.item()
 
     return total_loss
+
+
+def evaluate_model(
+    model: GPT2,
+    train_loader: DataLoader,
+    val_loader: DataLoader,
+    device: str | torch.device,
+) -> tuple[float, float]:
+    """
+    Calculates model loss on two separated datasets - train and validation.
+
+    Args:
+
+    Returns:
+    """
+
+    model.eval()
+    with torch.no_grad():
+        train_loss = calc_loss_loader(train_loader, model, device)
+        val_loss = calc_loss_loader(val_loader, model, device)
+    model.train()
+    return train_loss, val_loss
