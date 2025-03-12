@@ -19,10 +19,10 @@ class GPT2(nn.Module):
         self.token_embedding = nn.Embedding(config.vocab_size, config.d_emb)
         self.pos_embedding = nn.Embedding(config.context_length, config.d_emb)
         self.dropout = nn.Dropout(config.drop_rate)
-        self.trf_blocks = nn.Sequential(*[
+        self.trf_blocks = nn.Sequential(*(
             Transformer(config)
             for _ in range(config.n_layers)
-        ])
+        ))
         self.final_norm = LayerNorm(config.d_emb)
         self.linear_output = nn.Linear(config.d_emb, config.vocab_size, bias=False)
 
