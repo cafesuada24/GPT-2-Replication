@@ -56,7 +56,9 @@ class GPTDataset(Dataset):
 
 
 def create_dataloader(
-    raw_text: str, tokenizer: Tokenizer, data_config: DataConfig | None = None,
+    raw_text: str,
+    tokenizer: Tokenizer,
+    data_config: DataConfig | None = None,
 ) -> DataLoader:
     """"""
 
@@ -78,3 +80,14 @@ def create_dataloader(
     )
 
     return dataloader
+
+
+def train_test_split(
+    raw_text: str,
+    train_ratio: float = 0.9,
+) -> tuple[str, str]:
+    split_index = int(train_ratio * len(raw_text))
+    train_text = raw_text[:split_index]
+    test_text = raw_text[split_index:]
+
+    return train_text, test_text
