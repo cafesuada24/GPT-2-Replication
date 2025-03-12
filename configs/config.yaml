@@ -2,10 +2,10 @@ model:
   tokenizer:
     name: "tiktoken"
     init_args:
-      encoding_name: "gpt2" 
+      encoding_name: "gpt2"
   config:
     vocab_size: 50257
-    context_length: 1024
+    context_length: 256
     drop_rate: 0.1
     qkv_bias: False
   model_size: "124M"
