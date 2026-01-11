@@ -1,5 +1,5 @@
-import torch
 import pytest
+import torch
 
 from src.model.attention import MultiHeadAttention, MultiHeadAttentionConfig
 
@@ -13,11 +13,11 @@ class TestAttention:
             [0.22, 0.58, 0.33],  # with
             [0.77, 0.25, 0.10],  # one
             [0.05, 0.80, 0.55],
-        ]  # step
+        ],  # step
     )
 
     @pytest.mark.parametrize(
-        "batch_size, d_in, d_out, n_heads, context_length, batch",
+        'batch_size, d_in, d_out, n_heads, context_length, batch',
         [
             (2, 3, 4, 2, 6, torch.stack((inputs, inputs))),  # Small test case
             # (4, 32, 128, 128, 8, 32), # Medium case
@@ -25,10 +25,19 @@ class TestAttention:
         ],
     )
     def test_multihead_attention_forward(
-        self, batch_size, d_in, d_out, n_heads, context_length, batch
+        self,
+        batch_size: int,
+        d_in: int,
+        d_out: int,
+        n_heads: int,
+        context_length: int,
+        batch: int,
     ):
         config = MultiHeadAttentionConfig(
-            d_in=d_in, d_out=d_out, n_heads=n_heads, context_length=context_length
+            d_in=d_in,
+            d_out=d_out,
+            n_heads=n_heads,
+            context_length=context_length,
         )
         attn = MultiHeadAttention(config)
         output = attn(batch)

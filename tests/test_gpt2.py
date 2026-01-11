@@ -1,13 +1,14 @@
-from omegaconf import OmegaConf, DictConfig
 import pytest
 import torch
+from omegaconf import DictConfig, OmegaConf
 
 from src.model.gpt2 import GPT2
 
+
 @pytest.fixture
-def config():
+def config() -> DictConfig:
     return OmegaConf.create({
-        'vocab_size': 50257, 
+        'vocab_size': 50257,
         'context_length': 1024,
         'drop_rate': 0.1,
         'qkv_bias': False,
@@ -17,14 +18,14 @@ def config():
     })
 
 @pytest.fixture
-def n_batches():
+def n_batches() -> int:
     return 2
 
 @pytest.fixture
-def n_tokens():
+def n_tokens() -> int:
     return 5
 
-def test_gpt2_shape(config, n_batches, n_tokens):
+def test_gpt2_shape(config: DictConfig, n_batches: int, n_tokens: int):
     gpt2 = GPT2(config)
 
     x = torch.randint(0, config.vocab_size, (n_batches, n_tokens))

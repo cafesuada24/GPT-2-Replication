@@ -1,13 +1,14 @@
 import pytest
-from omegaconf import OmegaConf
 import torch
+from omegaconf import DictConfig, OmegaConf
 
 from src.model.transformer import Transformer
 
+
 @pytest.fixture
-def config():
+def config() -> DictConfig:
     return OmegaConf.create({
-        'vocab_size': 50257, 
+        'vocab_size': 50257,
         'context_length': 1024,
         'drop_rate': 0.1,
         'qkv_bias': False,
@@ -17,14 +18,14 @@ def config():
     })
 
 @pytest.fixture
-def n_batches():
+def n_batches() -> int:
     return 2
 
 @pytest.fixture
-def n_tokens():
+def n_tokens() -> int:
     return 5
 
-def test_transformer_forward(config, n_batches, n_tokens):
+def test_transformer_forward(config: DictConfig, n_batches: int, n_tokens: int):
     trf = Transformer(config)
 
     x = torch.randn(n_batches, n_tokens, config.d_emb)
