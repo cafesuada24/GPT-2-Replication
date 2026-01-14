@@ -1,6 +1,6 @@
 """This module loads configurations"""
 
-from omegaconf import ListConfig, OmegaConf, DictConfig
+from omegaconf import DictConfig, ListConfig, OmegaConf
 
 
 def load_config(config_path: str = r"configs/config.yaml") -> DictConfig | ListConfig:

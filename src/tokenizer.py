@@ -1,9 +1,10 @@
 """Contains text encoder/decoder"""
 
 import abc
+from typing import Any
 
-import torch
 import tiktoken
+import torch
 
 
 class Tokenizer(metaclass=abc.ABCMeta):
@@ -19,12 +20,12 @@ class Tokenizer(metaclass=abc.ABCMeta):
         )
 
     @abc.abstractmethod
-    def encode(self, text: str, *args, **kwargs) -> list[int]:
+    def encode(self, text: str, *args: Any, **kwargs: Any) -> list[int]:
         """Encodes text into a tensor of integers"""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def decode(self, token_ids: list[int], *args, **kwargs) -> str:
+    def decode(self, token_ids: list[int], *args: Any, **kwargs: Any) -> str:
         """Decodes an encoded text back to string"""
         raise NotImplementedError
 
@@ -32,19 +33,19 @@ class Tokenizer(metaclass=abc.ABCMeta):
 class TiktokenTokenizer(Tokenizer):
     """Uses tiktoken from GPT"""
 
-    def __init__(self, encoding_name: str = 'gpt2') -> None:
+    def __init__(self, encoding_name: str = "gpt2") -> None:
         super().__init__()
 
         self.__tokenizer = tiktoken.get_encoding(encoding_name)
 
-    def encode(self, text: str, *args, **kwargs) -> list[int]:
+    def encode(self, text: str, *args: Any, **kwargs: Any) -> list[int]:
         return self.__tokenizer.encode(text, *args, **kwargs)
 
-    def decode(self, token_ids: list[int], *args, **kwargs) -> str:
+    def decode(self, token_ids: list[int], *args: Any, **kwargs: Any) -> str:
         return self.__tokenizer.decode(token_ids, *args, **kwargs)
 
 
-def get_tokenizer(tokenizer_name: str, init_args: dict):
+def get_tokenizer(tokenizer_name: str, init_args: dict[str, Any]):
     """Get corresponding tokenizer"""
 
     match tokenizer_name:
@@ -53,12 +54,11 @@ def get_tokenizer(tokenizer_name: str, init_args: dict):
         case _:
             raise ValueError(f"Unsupported tokenizer: {tokenizer_name}")
 
+
 def text_to_token_ids(
-        text: str,
-        tokenizer: Tokenizer, *,
-        allowed_special: set | None = None) -> torch.Tensor:
-    """
-    Converts text into a tensor of token ids
+    text: str, tokenizer: Tokenizer, *, allowed_special: set[str] | None = None
+) -> torch.Tensor:
+    """Converts text into a tensor of token ids
 
     Args:
         text (str): raw text to convert
@@ -68,14 +68,16 @@ def text_to_token_ids(
         Tensor: Shape (batch(1), num tokens)
     """
 
-    allowed_special = allowed_special if allowed_special is not None else {'<|endoftext|>'}
+    allowed_special = (
+        allowed_special if allowed_special is not None else {"<|endoftext|>"}
+    )
 
     encoded = tokenizer.encode(text, allowed_special=allowed_special)
     return torch.tensor(encoded).unsqueeze(0)
 
+
 def token_ids_to_text(token_ids: torch.Tensor, tokenizer: Tokenizer) -> str:
-    """
-    Converts token ids back to raw text
+    """Converts token ids back to raw text
 
     Args:
         token_ids (Tensor): token ids of shape (batch size (1), num tokens)

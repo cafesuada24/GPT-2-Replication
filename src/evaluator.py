@@ -30,11 +30,11 @@ def calc_loss_batch(
 
     logits: torch.Tensor = model(input_batch)
 
-    loss = torch.nn.functional.cross_entropy(
-        logits.flatten(0, 1), target_batch.flatten()
+    return torch.nn.functional.cross_entropy(
+        logits.flatten(0, 1),
+        target_batch.flatten(),
     )
 
-    return loss
 
 
 def calc_loss_loader(
@@ -55,10 +55,10 @@ def calc_loss_loader(
     Returns:
         Tensor: a scalar tensor contains calculated model loss.
     """
-    assert n_batches is None or n_batches > 0, "n_batches must be a positive integer."
+    assert n_batches is None or n_batches > 0, 'n_batches must be a positive integer.'
 
     if len(dataloader) == 0:
-        return float("nan")
+        return float('nan')
     if n_batches is None:
         n_batches = len(dataloader)
     else:

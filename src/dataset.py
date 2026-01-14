@@ -1,9 +1,9 @@
-""""""
+"""Contains the Dataset and DataLoader implementation for the GPT model."""
 
 from dataclasses import dataclass
 
 import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset
 
 from .tokenizer import Tokenizer
 
@@ -20,7 +20,10 @@ class DataConfig:
     num_workers: int = 0
 
 
-class GPTDataset(Dataset):
+type DataSample = tuple[torch.Tensor, torch.Tensor]
+
+
+class GPTDataset(Dataset[DataSample]):
     """"""
 
     def __init__(
@@ -33,25 +36,27 @@ class GPTDataset(Dataset):
 
         tokens = tokenizer.encode(raw_text)
 
-        self.inputs = []
-        self.targets = []
+        self.inputs: list[torch.Tensor] = []
+        self.targets: list[torch.Tensor] = []
 
         for index in range(
-            0, len(tokens) - data_config.max_sequence_len, data_config.stride
+            0,
+            len(tokens) - data_config.max_sequence_len,
+            data_config.stride,
         ):
             self.inputs.append(
-                torch.tensor(tokens[index : index + data_config.max_sequence_len])
+                torch.tensor(tokens[index : index + data_config.max_sequence_len]),
             )
             self.targets.append(
                 torch.tensor(
-                    tokens[index + 1 : index + data_config.max_sequence_len + 1]
-                )
+                    tokens[index + 1 : index + data_config.max_sequence_len + 1],
+                ),
             )
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.inputs)
 
-    def __getitem__(self, index) -> tuple[torch.Tensor, torch.Tensor]:
+    def __getitem__(self, index: int) -> DataSample:
         return self.inputs[index], self.targets[index]
 
 
@@ -59,7 +64,7 @@ def create_dataloader(
     raw_text: str,
     tokenizer: Tokenizer,
     data_config: DataConfig | None = None,
-) -> DataLoader:
+) -> DataLoader[DataSample]:
     """"""
 
     if data_config is None:
@@ -71,7 +76,7 @@ def create_dataloader(
         data_config=data_config,
     )
 
-    dataloader = DataLoader(
+    return DataLoader(
         dataset,
         shuffle=data_config.shuffle,
         batch_size=data_config.batch_size,
@@ -79,7 +84,6 @@ def create_dataloader(
         num_workers=data_config.num_workers,
     )
 
-    return dataloader
 
 
 def train_test_split(

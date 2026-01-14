@@ -13,8 +13,8 @@ def generate(
     top_k: int | None = None,
     eos_id: int | None = None,
 ) -> torch.Tensor:
-    """
-    Generates text using GPT2 model.
+    """Generates text using GPT2 model.
+
     This generator uses top-k sampling along with temperature scaling,
     returning diverse results while still maintaining grammatical coherence and correctness.
 
@@ -26,10 +26,10 @@ def generate(
         temperature (float): temperature to scale. Default is 0.0.
         top_k (int): top first k highest probability to select. Default is None.
         eos_id (int): end of sequence id. Default is None.
+
     Returns:
         Tensor: generated token ids
     """
-
     for _ in range(max_new_tokens):
         idx_cond = token_ids[:, -context_size:]
 
