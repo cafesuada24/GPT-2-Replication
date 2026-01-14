@@ -31,7 +31,7 @@ def _load_model(file: str, device: str) -> GPT2:
 
 def main(args: argparse.Namespace) -> None:
     device = 'cuda' if args.cuda else 'cpu'
-    model = _load_model(args.file, device)
+    model = _load_model(args.model, device)
     tokenizer = TiktokenTokenizer()
     print('Model > Hi, how can I help you')
 
@@ -41,7 +41,7 @@ def main(args: argparse.Namespace) -> None:
             response = generate(
                 model=model,
                 token_ids=text_to_token_ids(prompt, tokenizer).to(device),
-                max_new_tokens=args.max_new_token,
+                max_new_tokens=args.max_new_tokens,
                 context_size=args.context_length,
                 temperature=args.temperature,
             )
@@ -54,20 +54,20 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='GPT2 Launch')
 
     parser.add_argument(
-        '-f',
-        '--file',
+        '-m',
+        '--model',
         help='Model pkl file path',
         default=config.paths.model_dir + 'gpt2.pkl',
     )
 
     parser.add_argument(
-        '--max-new-token',
-        help='Max new token to generate',
-        default=1024,
+        '--max_new_tokens',
+        help='Max new tokens to generate',
+        default=200,
     )
 
     parser.add_argument(
-        '--context-length',
+        '--context_length',
         help='Context size',
         default=config.model.config.context_length,
     )

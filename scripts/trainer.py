@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Pretraining model scripts."""
+"""GPT2 Trainer."""
 
 import argparse
 import time
@@ -16,7 +16,7 @@ from src.utils.config import config
 from src.utils.logger import get_logger
 
 
-def main(args: argparse.Namespace) -> None:
+def _pretrain(args: argparse.Namespace) -> None:
     logger = get_logger('Pretrainer')
 
     with open(args.file, encoding='utf-8') as f:
@@ -99,46 +99,78 @@ def main(args: argparse.Namespace) -> None:
     logger.info(f'Model saved to {args.output}.')
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(prog='GPT2 Pretraining')
+def _finetune(args: argparse.Namespace) -> None: ...
 
-    parser.add_argument(
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(prog='GPT2 Trainer')
+
+    subparser = parser.add_subparsers(dest='command', help='Available subcommands.')
+
+    #####################
+    # Pretrainer parser #
+    #####################
+
+    pretrain_parser = subparser.add_parser('pretrain', help='Pretrain a new model')
+
+    pretrain_parser.add_argument(
         '-f',
         '--file',
         help='Training data',
         default=config.paths.data_dir + 'the-verdict.txt',
     )
-    parser.add_argument(
+    pretrain_parser.add_argument(
+        '--model_size',
+        help='Model size (124M, 355M, 774M, 1558M)',
+        default='124M',
+        choices=['124M', '355M', '774M', '1558M'],
+    )
+    pretrain_parser.add_argument(
         '-o',
         '--output',
         help='Model saving path',
         default=config.paths.model_dir + 'gpt2.pkl',
     )
-    parser.add_argument(
+    pretrain_parser.add_argument(
         '--num_epochs',
         help='Number of training epochs',
         default=10,
         type=int,
     )
-    parser.add_argument(
+    pretrain_parser.add_argument(
         '--train_ratio',
         help='Ratio of training data',
         default=0.9,
         type=float,
     )
-    parser.add_argument(
+    pretrain_parser.add_argument(
         '--batch_size',
         help='Size of a batch',
         default=2,
         type=float,
     )
-    parser.add_argument(
+    pretrain_parser.add_argument(
         '-l',
         '--learning_rate',
         help='Learning rate',
         default=0.0004,
         type=float,
     )
-    args = parser.parse_args()
+    pretrain_parser.set_defaults(func=_pretrain)
 
-    main(args)
+    ###################
+    # Finetune parser #
+    ###################
+
+    finetune_parser = subparser.add_parser(
+        'finetune', help='Finetune an existing model'
+    )
+
+    finetune_parser.set_defaults(func=_finetune)
+    # ----------------
+
+    args = parser.parse_args()
+    if hasattr(args, 'func'):
+        args.func(args)
+    else:
+        parser.print_help()
