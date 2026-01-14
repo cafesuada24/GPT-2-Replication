@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
-"""Pretraining model scripts"""
+"""Pretraining model scripts."""
 
 import argparse
-from pathlib import Path
 import time
+from pathlib import Path
 
 import torch
+
 from src.dataset import DataConfig, create_dataloader, train_test_split
 from src.model.gpt2 import GPT2
 from src.tokenizer import TiktokenTokenizer
@@ -16,10 +17,9 @@ from src.utils.logger import get_logger
 
 
 def main(args: argparse.Namespace) -> None:
+    logger = get_logger('Pretrainer')
 
-    logger = get_logger("Pretrainer")
-
-    with open(args.file, "r", encoding="utf-8") as f:
+    with open(args.file, encoding='utf-8') as f:
         raw_text = f.read()
 
     logger.info(f'Loaded "{args.file}" with {len(raw_text)} characters.')
@@ -49,15 +49,15 @@ def main(args: argparse.Namespace) -> None:
         ),
     )
 
-    logger.info(f"Data splitted with train ratio of {args.train_ratio}")
+    logger.info(f'Data splitted with train ratio of {args.train_ratio}')
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    logger.info(f"Selected device {device}.")
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    logger.info(f'Selected device {device}.')
 
     model = GPT2(config.model.config)
 
     total_params = sum(p.numel() for p in model.parameters())
-    logger.info(f"Model initialized with {total_params:,} parameters.")
+    logger.info(f'Model initialized with {total_params:,} parameters.')
 
     optimizer = torch.optim.AdamW(
         model.parameters(),
@@ -65,13 +65,13 @@ def main(args: argparse.Namespace) -> None:
         weight_decay=0.1,
     )
 
-    logger.info(f"Optimizer loaded.")
-    logger.info("Training hyper-parameters:")
-    logger.info(f"  Number of epochs: {args.num_epochs}")
-    logger.info(f"  Batch size: {args.batch_size}")
-    logger.info(f"  Learning rate: {args.learning_rate}")
+    logger.info(f'Optimizer loaded.')
+    logger.info('Training hyper-parameters:')
+    logger.info(f'  Number of epochs: {args.num_epochs}')
+    logger.info(f'  Batch size: {args.batch_size}')
+    logger.info(f'  Learning rate: {args.learning_rate}')
 
-    logger.info("Pretraining process started.")
+    logger.info('Pretraining process started.')
 
     start_time = time.perf_counter()
     train_model(
@@ -84,12 +84,12 @@ def main(args: argparse.Namespace) -> None:
         eval_iter=5,
         logger=logger,
         tokenizer=tokenizer,
-        start_context="Every effort moves you",
+        start_context='Every effort moves you',
     )
     end_time = time.perf_counter()
 
     logger.info(
-        f"Pretraining process finished in {end_time - start_time:0.4f} seconds."
+        f'Pretraining process finished in {end_time - start_time:0.4f} seconds.',
     )
 
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
@@ -99,30 +99,45 @@ def main(args: argparse.Namespace) -> None:
     logger.info(f'Model saved to {args.output}.')
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(prog="GPT2 Pretraining")
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(prog='GPT2 Pretraining')
 
     parser.add_argument(
-        "-f",
-        "--file",
-        help="Training data",
-        default=config.paths.data_dir + "the-verdict.txt",
+        '-f',
+        '--file',
+        help='Training data',
+        default=config.paths.data_dir + 'the-verdict.txt',
     )
     parser.add_argument(
-        "-o",
-        "--output",
-        help="Model saving path",
-        default=config.paths.model_dir + "gpt2.pkl",
+        '-o',
+        '--output',
+        help='Model saving path',
+        default=config.paths.model_dir + 'gpt2.pkl',
     )
     parser.add_argument(
-        "--num_epochs", help="Number of training epochs", default=10, type=int
+        '--num_epochs',
+        help='Number of training epochs',
+        default=10,
+        type=int,
     )
     parser.add_argument(
-        "--train_ratio", help="Ratio of training data", default=0.9, type=float
+        '--train_ratio',
+        help='Ratio of training data',
+        default=0.9,
+        type=float,
     )
-    parser.add_argument("--batch_size", help="Size of a batch", default=2, type=float)
     parser.add_argument(
-        "-l", "--learning_rate", help="Learning rate", default=0.0004, type=float
+        '--batch_size',
+        help='Size of a batch',
+        default=2,
+        type=float,
+    )
+    parser.add_argument(
+        '-l',
+        '--learning_rate',
+        help='Learning rate',
+        default=0.0004,
+        type=float,
     )
     args = parser.parse_args()
 
