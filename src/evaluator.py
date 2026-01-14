@@ -1,7 +1,9 @@
-"""This module contains model evaluators"""
+"""This module contains model evaluator utilities."""
 
 import torch
 from torch.utils.data import DataLoader
+
+from src.dataset import DataSample
 
 from .model.gpt2 import GPT2
 
@@ -12,18 +14,17 @@ def calc_loss_batch(
     model: GPT2,
     device: str | torch.device,
 ) -> torch.Tensor:
-    """
-    Calculate the model loss on a data batch.
+    """Calculate the model loss on a data batch.
 
     Args:
         input_batch (Tensor): an input tensor of shape (batch size, num tokens).
         target_batch (Tensor): an target tensor of the same shape (batch size, num tokens).
         model (GPT2): a GPT2 model
         device (str or torch.device): the device that the model is sent to
+
     Returns:
         Tensor: a scalar tensor contains calculated model loss.
     """
-
     input_batch = input_batch.to(device)
     target_batch = target_batch.to(device)
 
@@ -37,13 +38,12 @@ def calc_loss_batch(
 
 
 def calc_loss_loader(
-    dataloader: DataLoader,
+    dataloader: DataLoader[DataSample],
     model: GPT2,
     device: str | torch.device,
     n_batches: int | None = None,
 ) -> float:
-    """
-    Calculate the model loss on a data loader.
+    """Calculate the model loss on a data loader.
 
     Args:
         dataloader (Dataloader): dataset
@@ -51,10 +51,10 @@ def calc_loss_loader(
         device (str or torch.device): the device that the model is sent to
         n_batches (int or None): number of batches to be included in calculation.
                                  Default is None, or equally the whole dataloader.
+
     Returns:
         Tensor: a scalar tensor contains calculated model loss.
     """
-
     assert n_batches is None or n_batches > 0, "n_batches must be a positive integer."
 
     if len(dataloader) == 0:
@@ -82,19 +82,12 @@ def calc_loss_loader(
 
 def evaluate_model(
     model: GPT2,
-    train_loader: DataLoader,
-    val_loader: DataLoader,
+    train_loader: DataLoader[DataSample],
+    val_loader: DataLoader[DataSample],
     device: str | torch.device,
     eval_iter: int | None = None,
 ) -> tuple[float, float]:
-    """
-    Calculates model loss on two separated datasets - train and validation.
-
-    Args:
-
-    Returns:
-    """
-
+    """Calculates model loss on two separated datasets - train and validation."""
     model.eval()
     with torch.no_grad():
         train_loss = calc_loss_loader(train_loader, model, device, n_batches=eval_iter)
