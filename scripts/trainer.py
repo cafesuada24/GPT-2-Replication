@@ -18,11 +18,12 @@ from src.utils.logger import get_logger
 
 def _pretrain(args: argparse.Namespace) -> None:
     logger = get_logger('Pretrainer')
-
     with open(args.file, encoding='utf-8') as f:
         raw_text = f.read()
 
     logger.info(f'Loaded "{args.file}" with {len(raw_text)} characters.')
+
+    config.model.config.context_length = args.context_length
 
     tokenizer = TiktokenTokenizer()
 
@@ -65,7 +66,7 @@ def _pretrain(args: argparse.Namespace) -> None:
         weight_decay=0.1,
     )
 
-    logger.info(f'Optimizer loaded.')
+    logger.info('Optimizer loaded.')
     logger.info('Training hyper-parameters:')
     logger.info(f'  Number of epochs: {args.num_epochs}')
     logger.info(f'  Batch size: {args.batch_size}')
@@ -94,7 +95,16 @@ def _pretrain(args: argparse.Namespace) -> None:
 
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
 
-    torch.save(model.state_dict(), args.output)
+    torch.save(
+        {
+            'model_state_dict': model.state_dict(),
+            'optimier_state_dict': optimizer.state_dict(),
+            'config': {
+                'context_length': config.model.config.context_length,
+            },
+        },
+        args.output,
+    )
 
     logger.info(f'Model saved to {args.output}.')
 
@@ -129,12 +139,18 @@ if __name__ == '__main__':
         '-o',
         '--output',
         help='Model saving path',
-        default=config.paths.model_dir + 'gpt2.pkl',
+        default=config.paths.model_dir + 'gpt2.pth',
     )
     pretrain_parser.add_argument(
         '--num_epochs',
         help='Number of training epochs',
         default=10,
+        type=int,
+    )
+    pretrain_parser.add_argument(
+        '--context_length',
+        help="Model's context length",
+        default=1024,
         type=int,
     )
     pretrain_parser.add_argument(
@@ -163,7 +179,8 @@ if __name__ == '__main__':
     ###################
 
     finetune_parser = subparser.add_parser(
-        'finetune', help='Finetune an existing model'
+        'finetune',
+        help='Finetune an existing model',
     )
 
     finetune_parser.set_defaults(func=_finetune)
