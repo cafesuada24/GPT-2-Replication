@@ -1,12 +1,13 @@
-"""This module contains implementation of a Transformer block"""
+"""This module contains implementation of a Transformer block."""
 
-from omegaconf import DictConfig
 import torch
+from omegaconf import DictConfig
 from torch import nn
 
 from .attention import MultiHeadAttention, MultiHeadAttentionConfig
-from .layernorm import LayerNorm
 from .feedforward import FeedForward
+from .layernorm import LayerNorm
+
 
 class Transformer(nn.Module):
     """"""
@@ -29,7 +30,7 @@ class Transformer(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """"""
- 
+
         shortcut = x
         x = self.layernorm1(x)
         x = self.mha(x)
@@ -40,6 +41,5 @@ class Transformer(nn.Module):
         x = self.layernorm2(x)
         x = self.feedforward(x)
         x = self.dropout(x)
-        x = x + shortcut
+        return x + shortcut
 
-        return x

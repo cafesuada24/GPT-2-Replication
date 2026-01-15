@@ -7,8 +7,7 @@ from .gelu import GELU
 
 
 class FeedForward(nn.Module):
-    """
-    Position-wise Feed-Forward Network (FFN) used in Transformer models.
+    """Position-wise Feed-Forward Network (FFN) used in Transformer models.
 
     This module consists of two linear layers with an activation function in between. It is 
     applied independently to each position in the sequence. The standard formulation is:
@@ -33,8 +32,7 @@ class FeedForward(nn.Module):
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """
-        Applies the feed-forward transformation to the input tensor.
+        """Applies the feed-forward transformation to the input tensor.
 
         The input is projected to a higher-dimensional space (`d_hidden`), passed through an 
         activation function, and projected back to the original dimension (`d_model`).
@@ -45,5 +43,4 @@ class FeedForward(nn.Module):
         Returns:
             Tensor: Output tensor of the same shape (batch size, num tokens, d_emb).
         """
-
         return self.layers(x)

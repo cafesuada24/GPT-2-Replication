@@ -1,5 +1,4 @@
-"""
-attention.py - Multi-Head Attention Module
+"""attention.py - Multi-Head Attention Module.
 
 This module implements the Multi-Head Attention mechanism as described in
 "Attention Is All You Need" (Vaswani et al., 2017). It includes:
@@ -33,8 +32,7 @@ from torch import nn
 
 @dataclass
 class MultiHeadAttentionConfig:
-    """
-    Configuration for the Multi-Head Attention mechanism.
+    """Configuration for the Multi-Head Attention mechanism.
 
     This class encapsulates the hyperparameters required to initialize a multi-head
     attention module, improving code readability and maintainability.
@@ -66,26 +64,25 @@ class MultiHeadAttentionConfig:
 
     def __post__init__(self) -> None:
         if self.d_in <= 0:
-            raise ValueError("d_in must be a positive integer.")
+            raise ValueError('d_in must be a positive integer.')
         if self.d_out <= 0:
-            raise ValueError("d_out must be a positive integer.")
+            raise ValueError('d_out must be a positive integer.')
         if self.n_heads <= 0:
-            raise ValueError("n_heads must be a positive integer.")
+            raise ValueError('n_heads must be a positive integer.')
         if self.d_head < -1 or self.d_head == 0:
-            raise ValueError("d_head must be a positive integer (except -1).")
+            raise ValueError('d_head must be a positive integer (except -1).')
         if self.d_head == -1:
             if self.d_out % self.n_heads > 0:
-                raise ValueError("d_out must be divisible by n_heads.")
+                raise ValueError('d_out must be divisible by n_heads.')
             self.d_head = self.d_out // self.n_heads
         if not 0.0 <= self.dropout <= 1.0:
-            raise ValueError("dropout must be between 0.0 and 1.0.")
+            raise ValueError('dropout must be between 0.0 and 1.0.')
         if self.context_length <= 0:
-            raise ValueError("context_length must be a positive integer.")
+            raise ValueError('context_length must be a positive integer.')
 
 
 class MultiHeadAttention(nn.Module):
-    """
-    Implements Multi-Head Attention as described in "Attention Is All You Need"
+    """Implements Multi-Head Attention as described in "Attention Is All You Need"
     (Vaswani et al., 2017).
 
     This module allows the model to jointly attend to information from different
@@ -98,7 +95,7 @@ class MultiHeadAttention(nn.Module):
 
     Example:
         attn = MultiHeadAttention(config)
-    """
+    """  # noqa: D205
 
     def __init__(self, config: MultiHeadAttentionConfig) -> None:
         super().__init__()
@@ -106,19 +103,25 @@ class MultiHeadAttention(nn.Module):
         self.config = config
 
         self.w_query = nn.Linear(
-            self.config.d_in, self.config.d_out, bias=self.config.qkv_bias
+            self.config.d_in,
+            self.config.d_out,
+            bias=self.config.qkv_bias,
         )
         self.w_key = nn.Linear(
-            self.config.d_in, self.config.d_out, bias=self.config.qkv_bias
+            self.config.d_in,
+            self.config.d_out,
+            bias=self.config.qkv_bias,
         )
         self.w_value = nn.Linear(
-            self.config.d_in, self.config.d_out, bias=self.config.qkv_bias
+            self.config.d_in,
+            self.config.d_out,
+            bias=self.config.qkv_bias,
         )
         self.dropout = nn.Dropout(self.config.dropout)
         self.out_proj = nn.Linear(self.config.d_out, self.config.d_out)
 
         self.register_buffer(
-            "mask",
+            'mask',
             torch.triu(
                 torch.ones(self.config.context_length, self.config.context_length),
                 diagonal=1,
@@ -176,7 +179,7 @@ class MultiHeadAttention(nn.Module):
             2, 3
         )  # Shape (_, _, num tokens, num tokens)
         attn_scores.masked_fill_(
-            getattr(self, "mask").bool()[:n_tokens, :n_tokens],
+            getattr(self, 'mask').bool()[:n_tokens, :n_tokens],
             -torch.inf,
         )
         attn_weights = torch.softmax(attn_scores / keys.shape[-1] ** 0.5, dim=-1)
