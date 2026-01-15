@@ -34,15 +34,16 @@ python scripts/download_weights.py --model_size 124M
 Train the model on a corpus of text documents (unsupervised learning).
 ```bash
 # Example
-python3 train.py \
-    --mode pretrain \
+python3 -m scripts.trainer \
+    pretrain \
     --model_size 124M \
-    --data_dir data/the-verdict.txt \
-    --train_ratio 0.9 \ # Ratio of training data
+    --file data/the-verdict.txt \
+    --train_ratio 0.9 \
     --batch_size 32 \
     --num_epochs 10 \
+    --context_length 256 \
     --learning_rate 0.0004 \
-    --output checkpoints/gpt2.pkl
+    --output checkpoints/gpt2.pth
 
 ```
 ### 2. Fine-Tuning: Classification
@@ -52,13 +53,22 @@ Fine-tune the model to respond to prompts/instructions (Supervised Fine-Tuning).
 *Input format expected: JSONL with `{"prompt": "...", "completion": "..."}`*
 ### 4. Inference
 ```bash
-# Example
-python3 run_model.py \
-    --model checkpoints/gpt2_model.pkl \
+# Run a custom trained model
+python3 -m scripts.run_model \
+    --custom_model \
+    --model_path checkpoints/gpt2.pth \
     --max_new_tokens 200 \
-    --context_length 512 \
     --temperature 0.7 \
     --cuda
+
+# Run the OpenAI trained model
+python3 -m scripts.run_model \
+    --gpt_model 124M \
+    --model_path models/gpt2 \
+    --max_new_tokens 200 \
+    --temperature 0.7 \
+    --cuda
+
 ```
 ## Configuration
 The project supports the following standard configurations via command line or YAML files in `configs/`:
