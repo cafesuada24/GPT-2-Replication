@@ -48,8 +48,8 @@ def download_and_load_gpt2(
     return settings, params
 
 
-def download_file(url, destination, backup_url=None):
-    def _attempt_download(download_url):
+def download_file(url: str, destination: str, backup_url: str | None = None):
+    def _attempt_download(download_url: str):
         response = requests.get(download_url, stream=True, timeout=60)
         response.raise_for_status()
 
@@ -64,14 +64,19 @@ def download_file(url, destination, backup_url=None):
 
         block_size = 1024  # 1 KB
         desc = os.path.basename(download_url)
-        with tqdm(
-            total=file_size, unit='iB', unit_scale=True, desc=desc
-        ) as progress_bar:
-            with open(destination, 'wb') as file:
-                for chunk in response.iter_content(chunk_size=block_size):
-                    if chunk:
-                        file.write(chunk)
-                        progress_bar.update(len(chunk))
+        with (
+            tqdm(
+                total=file_size,
+                unit='iB',
+                unit_scale=True,
+                desc=desc,
+            ) as progress_bar,
+            open(destination, 'wb') as file,
+        ):
+            for chunk in response.iter_content(chunk_size=block_size):
+                if chunk:
+                    file.write(chunk)
+                    progress_bar.update(len(chunk))
         return True
 
     try:
