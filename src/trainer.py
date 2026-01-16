@@ -6,7 +6,7 @@ import torch
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
 
-from src.dataset import DataSample
+from src.dataset.dataset import DataSample
 from src.tokenizer import Tokenizer, text_to_token_ids, token_ids_to_text
 
 from .evaluator import calc_loss_batch, evaluate_model

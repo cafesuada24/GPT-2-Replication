@@ -8,7 +8,7 @@ from pathlib import Path
 
 import torch
 
-from src.dataset import DataConfig, create_dataloader, train_test_split
+from src.dataset.dataset import DataConfig, create_dataloader, train_test_split
 from src.model.gpt2 import GPT2
 from src.tokenizer import TiktokenTokenizer
 from src.trainer import train_model

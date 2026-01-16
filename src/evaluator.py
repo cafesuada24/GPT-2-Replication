@@ -3,7 +3,7 @@
 import torch
 from torch.utils.data import DataLoader
 
-from src.dataset import DataSample
+from src.dataset.dataset import DataSample
 
 from .model.gpt2 import GPT2
 

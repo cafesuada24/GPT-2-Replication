@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import torch
 from torch.utils.data import DataLoader, Dataset
 
-from .tokenizer import Tokenizer
+from src.tokenizer import Tokenizer
 
 
 @dataclass
